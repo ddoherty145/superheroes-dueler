@@ -15,6 +15,7 @@ class Ability:
         random_value = random.randint(0, self.max_damage)
         return random_value
     
+    
 if __name__ == "__main__":
     ability = Ability("Debugging Ability", 20)
     print(ability.name)
