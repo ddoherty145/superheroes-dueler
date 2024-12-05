@@ -17,6 +17,7 @@ class Hero:
         winner = random.choice([self, opponent])
         print(f"The winner is {winner.name}!")
 
+
 if __name__ == "__main__":
    hero1 = Hero("Wonder Woman", 300)
    hero2 = Hero("Dumbledore", 250)
