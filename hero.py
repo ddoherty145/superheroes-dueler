@@ -2,7 +2,6 @@ import random
 from ability import Ability
 from armor import Armor
 from weapon import Weapon
-from team import Team
 
 class Hero:
     def __init__(self, name, starting_health=100):
@@ -13,35 +12,13 @@ class Hero:
             starting_health: Integer
             current_health: Integer
         '''
-        self.abilities = list()
-        self.armors = list()
+        self.abilities = []
+        self.armors = []
         self.name = name
         self.starting_health = starting_health
         self.current_health = starting_health
-
-    # def add_heroes(self, hero):
-    #     ''' Add Hero Object to self.heroes'''
-    #     # TODO: Add the Hero object that is passed in to the list of heroes in
-    #     # self.heroes
-    #     pass
-
-    # def view_all_heroes(self):
-    #     ''' Prints out all heroes to the console.'''
-    #     # TODO: Loop over the list of heroes and print their names to the terminal one by one.
-    #     pass
-
-    # def remove_hero(self, name):
-    #     '''Remove hero from heroes list.
-    #     If hero isn't found return 0.
-    #     '''
-    #     foundHero = False
-
-    #     for hero in self.heroes:
-    #         if hero.name == name:
-    #             self.heroes.remove(hero)
-    #             foundHero = True
-    #     if not foundHero:
-    #         return 0
+        self.deaths = 0
+        self.kills = 0
 
     def add_ability(self, ability):
         ''' Add ability to abilities list'''
@@ -70,6 +47,8 @@ class Hero:
         '''Calculate the total block ammount from all armor blocks.
             return: total_block:Int
         '''
+        if not self.is_alive():
+            return 0
         total_block = 0
         for armor in self.armors:
             total_block += armor.block()
@@ -84,6 +63,15 @@ class Hero:
         if self.current_health < 0:
             self.current_health = 0
 
+    def add_kill(self, num_kills):
+        '''Update self.kills by num_kills amount'''
+        self.kills += num_kills
+
+    def add_death(self, num_deaths):
+        '''Update deaths with num_deaths'''
+        self.deaths += num_deaths
+        
+
     def is_alive(self):
         '''Return True or False depending on whether the hero is alive or not.
         '''
@@ -91,31 +79,33 @@ class Hero:
 
 
     def fight(self, opponent):
-        ''' Current Hero will take turns fighting the opponent hero passed in.
-        '''
+        ''' Hero fights an opponent. '''
         if not self.abilities and not opponent.abilities:
-            print("Draw! Neither Hero has any Abilities.")
+            print(f"Draw! Neither {self.name} nor {opponent.name} has abilities.")
             return
-        
+
         while self.is_alive() and opponent.is_alive():
-            damage_to_opponent = self.attack()
-            print(f"{self.name} attacks {opponent.name} for {damage_to_opponent} damage.")
-            opponent.take_damage(damage_to_opponent)
-            print(f"{opponent.name} has {opponent.current_health} health remaining.")
+            print(f"{self.name} attacks {opponent.name}")
+            opponent.take_damage(self.attack())
+            print(f"{opponent.name} health: {opponent.current_health}")
 
             if not opponent.is_alive():
-                print(f"{self.name} won!")
+                print(f"{self.name} defeated {opponent.name}!")
+                self.add_kill(1)
+                opponent.add_death(1)
                 return
-            
-            damage_to_hero = opponent.attack()
-            print(f"{opponent.name} attacks {self.name} for {damage_to_hero} damage.")
-            self.take_damage(damage_to_hero)
-            print(f"{self.name} has {self.current_health} health remaining.")
+
+            print(f"{opponent.name} attacks {self.name}")
+            self.take_damage(opponent.attack())
+            print(f"{self.name} health: {self.current_health}")
 
             if not self.is_alive():
-                print(f"{opponent.name} won!")
+                print(f"{opponent.name} defeated {self.name}!")
+                opponent.add_kill(1)
+                self.add_death(1)
                 return
-            
+
+
 if __name__ == "__main__":
    ability = Ability("Great Debugging", 50)
    lasso = Weapon("Lasso of Truth", 90)
@@ -131,7 +121,6 @@ if __name__ == "__main__":
    wizard_powers2 = Ability("Priteago", 110)
    wiz_armor = Armor("Protecto", 50)
 
-
    hero2.add_weapon(wand)
    hero2.add_ability(wizard_powers2)
    hero2.add_armor(wiz_armor)
@@ -142,5 +131,7 @@ if __name__ == "__main__":
    print(f"Hero 2 attack damage: {hero2.attack()}")
    print(f"Hero 2 defense: {hero2.defend()}\n")
 
+   print(f"{hero1.name} - Kills: {hero1.kills}, Deaths: {hero1.deaths}")
+   print(f"{hero2.name} - Kills: {hero2.kills}, Deaths: {hero2.deaths}")
 
    hero1.fight(hero2)
