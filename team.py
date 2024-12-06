@@ -1,3 +1,5 @@
+import random
+
 class Team:
     def __init__(self, name):
         '''Initialize your team with its team name and an empty list of heroes.'''
@@ -31,53 +33,94 @@ class Team:
                 self.heroes.remove(hero)
                 return 1
         return 0
+    
+    def stats(self):
+        '''Print team statistics'''
+        for hero in self.heroes:
+            kd = hero.kills / hero.deaths if hero.deaths else hero.kills
+        print(f"{hero.name} Kill/Deaths:{kd}")
+
+    def revive_heroes(self):
+        '''Reset all heroes health to starting_health'''
+        for hero in self.heroes:
+            hero.current_health = hero.starting_health
+
+    def attack(self, other_team):
+        '''Battle each team against each other.'''
+        while self.heroes and other_team.heroes:
+            print(f"Heroes in {self.name}: {[hero.name for hero in self.heroes]}")
+            print(f"Heroes in {other_team.name}: {[hero.name for hero in other_team.heroes]}")
+
+            if not self.heroes or not other_team.heroes:
+                break
+
+            # Randomly select an attacker and a defender
+            attacker = random.choice(self.heroes)
+            defender = random.choice(other_team.heroes)
+
+            print(f"{attacker.name} is battling {defender.name}!")
+
+            # Let the heroes fight
+            attacker.fight(defender)
+
+            # Remove defeated heroes
+            if not defender.is_alive():
+                print(f"{defender.name} has been defeated!")
+                other_team.heroes.remove(defender)
+
+            if not attacker.is_alive():
+                print(f"{attacker.name} has been defeated!")
+                self.heroes.remove(attacker)
+
+        # Announce the winning team
+        if self.heroes:
+            print(f"Team {self.name} wins the battle!")
+        elif other_team.heroes:
+            print(f"Team {other_team.name} wins the battle!")
+        else:
+            print("Both teams are defeated!")
+
+
 
 
 if __name__ == '__main__':
     from hero import Hero
+    from ability import Ability
+    from armor import Armor
+    from team import Team
 
-    #create team
-    team_justice = Team("Justice League")
-    team_wizards = Team("The Order of The Phenoix")
+    team_one = Team("One")
+    jodie = Hero("Jodie Foster")
+    aliens = Ability("Alien Friends", 10000)
+    jodie.add_ability(aliens)
+    team_one.add_hero(jodie)
 
-    hero1 = Hero("Superman", 500)
-    hero2 = Hero("Batman", 300)
-    hero3 = Hero("Wonder Woman", 400)
+    team_two = Team("Two")
+    athena = Hero("Athena")
+    socks = Armor("Socks", 10)
+    athena.add_armor(socks)
+    team_two.add_hero(athena)
 
-    wiz1 = Hero("Dumbledore", 400)
-    wiz2 = Hero("Harry Potter", 500)
-    wiz3 = Hero("Ginny Weasley", 300)
+    print(f"Team Two Initial Health: {team_two.heroes[0].current_health}")
+    team_one.attack(team_two)
+    print(f"Team Two Final Health: {team_two.heroes[0].current_health if team_two.heroes else 'Defeated'}")
 
-    team_justice.add_hero(hero1)
-    team_justice.add_hero(hero2)
-    team_justice.add_hero(hero3)
+    # #create team
+    # team_justice = Team("Justice League")
+    # team_wizards = Team("The Order of The Phenoix")
 
-    team_wizards.add_hero(wiz1)
-    team_wizards.add_hero(wiz2)
-    team_wizards.add_hero(wiz3)
+    # team_justice.add_hero(Hero("Superman", 500))
+    # team_justice.add_hero(Hero("Wonder Woman", 400))
+    # team_wizards.add_hero(Hero("Dumbledore", 400))
+    # team_wizards.add_hero(Hero("Harry Potter", 500))
 
-    print("\nJustice League:")
-    team_justice.view_all_heroes()
+    # # Let the battle begin
+    # print("\nLet the battle begin!")
+    # team_justice.attack(team_wizards)
 
-    print("\nThe Order of the Phenoix")
-    team_wizards.view_all_heroes()
-    
-    result_jl = team_justice.remove_hero("Batman")
-    result_wz = team_wizards.remove_hero("Ginny Weasley")
+    # # Display final teams
+    # print("\nFinal Justice League:")
+    # team_justice.view_all_heroes()
 
-    print("\nAfter removing heroes:")
-    if result_jl == 1:
-        print("Batman was removed from the Justice League.")
-    else:
-        print("Batman not found in the Justice League")
-
-    if result_wz == 1:
-        print("Ginny Weasley was removed from The Order of the Phenoix")
-    else:
-        print("Ginny Weasley not found in The Order of the Phenoix")
-
-    print("\nUpdated Justice League:")
-    team_justice.view_all_heroes()
-
-    print("\nUpdated Order of the Phenoix")
-    team_wizards.view_all_heroes()
+    # print("\nFinal Order of the Phoenix:")
+    # team_wizards.view_all_heroes()
