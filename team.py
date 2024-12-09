@@ -81,8 +81,6 @@ class Team:
             print("Both teams are defeated!")
 
 
-
-
 if __name__ == '__main__':
     from hero import Hero
     from ability import Ability
