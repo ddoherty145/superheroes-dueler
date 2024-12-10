@@ -44,41 +44,61 @@ class Team:
         '''Reset all heroes health to starting_health'''
         for hero in self.heroes:
             hero.current_health = hero.starting_health
+            hero.defeated = False
 
     def attack(self, other_team):
         '''Battle each team against each other.'''
-        while self.heroes and other_team.heroes:
-            print(f"Heroes in {self.name}: {[hero.name for hero in self.heroes]}")
-            print(f"Heroes in {other_team.name}: {[hero.name for hero in other_team.heroes]}")
+        while any(hero.is_alive() for hero in self.heroes) and any(hero.is_alive() for hero in other_team.heroes):
+            attacker = random.choice([hero for hero in self.heroes if hero.is_alive()])
+            defender = random.choice([hero for hero in other_team.heroes if hero.is_alive()])
 
-            if not self.heroes or not other_team.heroes:
-                break
+            print(f"{attacker.name} is battling {defender.name}")
 
-            # Randomly select an attacker and a defender
-            attacker = random.choice(self.heroes)
-            defender = random.choice(other_team.heroes)
-
-            print(f"{attacker.name} is battling {defender.name}!")
-
-            # Let the heroes fight
             attacker.fight(defender)
 
-            # Remove defeated heroes
             if not defender.is_alive():
-                print(f"{defender.name} has been defeated!")
-                other_team.heroes.remove(defender)
-
+                print(f"{attacker.name} has defeated!")
             if not attacker.is_alive():
                 print(f"{attacker.name} has been defeated!")
-                self.heroes.remove(attacker)
 
-        # Announce the winning team
-        if self.heroes:
+        if any(hero.is_alive() for hero in self.heroes):
             print(f"Team {self.name} wins the battle!")
-        elif other_team.heroes:
+        elif any(hero.is_alive() for hero in other_team.heroes):
             print(f"Team {other_team.name} wins the battle!")
         else:
             print("Both teams are defeated!")
+        # while self.heroes and other_team.heroes:
+        #     print(f"Heroes in {self.name}: {[hero.name for hero in self.heroes]}")
+        #     print(f"Heroes in {other_team.name}: {[hero.name for hero in other_team.heroes]}")
+
+        #     if not self.heroes or not other_team.heroes:
+        #         break
+
+        #     # Randomly select an attacker and a defender
+        #     attacker = random.choice(self.heroes)
+        #     defender = random.choice(other_team.heroes)
+
+        #     print(f"{attacker.name} is battling {defender.name}!")
+
+        #     # Let the heroes fight
+        #     attacker.fight(defender)
+
+        #     # Remove defeated heroes
+        #     if not defender.is_alive():
+        #         print(f"{defender.name} has been defeated!")
+        #         other_team.heroes.remove(defender)
+
+        #     if not attacker.is_alive():
+        #         print(f"{attacker.name} has been defeated!")
+        #         self.heroes.remove(attacker)
+
+        # # Announce the winning team
+        # if self.heroes:
+        #     print(f"Team {self.name} wins the battle!")
+        # elif other_team.heroes:
+        #     print(f"Team {other_team.name} wins the battle!")
+        # else:
+        #     print("Both teams are defeated!")
 
 
 if __name__ == '__main__':

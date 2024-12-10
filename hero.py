@@ -19,6 +19,7 @@ class Hero:
         self.current_health = starting_health
         self.deaths = 0
         self.kills = 0
+        self.defeated = False
 
     def add_ability(self, ability):
         ''' Add ability to abilities list'''
@@ -60,8 +61,10 @@ class Hero:
         defense = self.defend()
         effective_damage = max(0, damage - defense)
         self.current_health -= effective_damage
-        if self.current_health < 0:
+        if self.current_health <= 0 and not self.defeated:
+            self.defeated = True
             self.current_health = 0
+            self.deaths += 1
 
     def add_kill(self, num_kills):
         '''Update self.kills by num_kills amount'''
@@ -75,7 +78,7 @@ class Hero:
     def is_alive(self):
         '''Return True or False depending on whether the hero is alive or not.
         '''
-        return self.current_health > 0
+        return self.current_health > 0 and not self.defeated
 
 
     def fight(self, opponent):
